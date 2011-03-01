@@ -155,7 +155,7 @@ namespace Apiki_Buscape_API
             if (string.IsNullOrEmpty(param))
                 this.ShowErrors(string.Format("Pelo menos um parâmetro de pesquisa é requerido na função <b>{0}</b>.", Services.findOfferList));
 
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param);
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param);
             return GetContent(url);
         }
 
