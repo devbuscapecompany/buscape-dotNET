@@ -76,7 +76,7 @@ namespace Apiki_Buscape_API
             this.isJson = ( this.format.Equals("json") ) ? "&format=json" : string.Empty ;
 
             if (!sandbox)
-                this.server = "wbs";
+                this.server = "bws";
 
             if (string.IsNullOrEmpty(this.applicationId))
                 this.ShowErrors("ID da aplicação não pode ser vazio.");
@@ -90,28 +90,41 @@ namespace Apiki_Buscape_API
         }
 
         #endregion
-        
+
         #region FindCategoryList
-        
+
         /// <summary>
-        /// Recupera dados das categorias.
+        /// Recupera dados das categorias. Para o parâmetro categoryID pode ser informado
+        /// o valor 0(zero) retornando assim uma lista com as categorias raiz.
+        /// Caso o código da categoria seja passado null e nenhuma palavra-chave tenha sido 
+        /// informada, será retornado uma lista com as categorias raiz.
         /// </summary>
         /// <param name="categoryId">ID da categoria</param>
         /// <param name="keyword">Palavra chave para busca entre as categorias</param>
         /// <param name="callback">Função de retorno a ser executada caso esteja usando json</param>
         /// <returns>Retorna uma string com os dados das categorias.</returns>
-        public string FindCategoryList(int categoryId, string keyword, string callback)
+        public string FindCategoryList(int? categoryId, string keyword, string callback)
         {
             string param = string.Empty;
-
-            if (categoryId != 0)
+            
+            if (categoryId == null && keyword == string.Empty)
+                categoryId = 0;
+            
+            if (categoryId != null)
                 param = "?categoryId=" + categoryId.ToString();
+            
             if (!string.IsNullOrEmpty(keyword))
-                param = "?keyword=" + keyword;
-            param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty ;
+            {
+                if (param != string.Empty)
+                    param += "&keyword=" + keyword;
+                else
+                    param = "?keyword=" + keyword;
+            }
+            
+            param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
             param += this.isJson;
 
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findCategoryList, this.applicationId, this.countryCode, param );
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findCategoryList, this.applicationId, this.countryCode, param);
 
             return this.GetContent(url);
         }
