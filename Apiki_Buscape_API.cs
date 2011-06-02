@@ -43,6 +43,11 @@ namespace Apiki_Buscape_API
         /// Ambiente servidor ( sandbox | wbs )
         /// </summary>
         private string server = "sandbox";
+
+        /// <summary>
+        /// Source ID do lomadee, com o qual a API do BuscaPé irá vincular com o perfil Lomadee.
+        /// </summary>
+        private string sourceId;
         
         /// <summary>
         /// Identificação dos serviços executados pela classe
@@ -62,18 +67,21 @@ namespace Apiki_Buscape_API
 
         #region Construtor
                
-        public Apiki_Buscape_API(string applicationId) : this(applicationId, "BR") { }
+        public Apiki_Buscape_API(string applicationId) : this(applicationId, string.Empty) { }
 
-        public Apiki_Buscape_API(string applicationId, string countryCode) : this(applicationId, countryCode, "xml") { }
+        public Apiki_Buscape_API(string applicationId, string sourceId) : this(applicationId, sourceId, "BR") { }
 
-        public Apiki_Buscape_API(string applicationId, string countryCode, string format) : this(applicationId, countryCode, format, true) { }
+        public Apiki_Buscape_API(string applicationId, string sourceId, string countryCode) : this(applicationId, sourceId, countryCode, "xml") { }
 
-        public Apiki_Buscape_API(string applicationId, string countryCode, string format, bool sandbox)
+        public Apiki_Buscape_API(string applicationId, string sourceId, string countryCode, string format) : this(applicationId, sourceId, countryCode, format, true) { }
+
+        public Apiki_Buscape_API(string applicationId, string sourceId, string countryCode, string format, bool sandbox)
         {
-            this.applicationId = applicationId;
-            this.countryCode = countryCode;
-            this.format = format;
-            this.isJson = ( this.format.Equals("json") ) ? "&format=json" : string.Empty ;
+            this.applicationId  = applicationId;
+            this.countryCode    = countryCode;
+            this.format         = format;
+            this.isJson         = ( this.format.Equals("json") ) ? "&format=json" : string.Empty ;
+            this.sourceId       = sourceId;
 
             if (!sandbox)
                 this.server = "bws";
@@ -85,8 +93,7 @@ namespace Apiki_Buscape_API
                 this.ShowErrors(string.Format("O código do país <b>{0}</b> não existe.", this.countryCode));
 
             if (!(new string[] { "xml", "json" }.Contains(this.format)))
-                this.ShowErrors(string.Format("O formato de retorno <b>{0}</b> não existe.", this.format));
-            
+                this.ShowErrors(string.Format("O formato de retorno <b>{0}</b> não existe.", this.format));            
         }
 
         #endregion
@@ -122,10 +129,11 @@ namespace Apiki_Buscape_API
             }
             
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findCategoryList, this.applicationId, this.countryCode, param);
-
+            
             return this.GetContent(url);
         }
 
@@ -166,9 +174,12 @@ namespace Apiki_Buscape_API
                 param = "?barcode=" + barcode;
 
             if (string.IsNullOrEmpty(param))
-                this.ShowErrors(string.Format("Pelo menos um parâmetro de pesquisa é requerido na função <b>{0}</b>.", Services.findOfferList));
+                this.ShowErrors("Pelo menos um parâmetro de pesquisa é requerido na função " + Services.findOfferList);
+
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param);
+                        
             return GetContent(url);
         }
 
@@ -196,12 +207,14 @@ namespace Apiki_Buscape_API
                     param = "?keyword=" + keyword;
             }
             if (string.IsNullOrEmpty(param))
-                this.ShowErrors(string.Format("Pelo menos um parâmetro de pesquisa é requerido na função <b>%s</b>.", Services.findProductList));
+                this.ShowErrors("Pelo menos um parâmetro de pesquisa é requerido na função " + Services.findProductList);
 
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param);
 
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param);
+                        
             return GetContent(url);
         }
 
@@ -219,8 +232,13 @@ namespace Apiki_Buscape_API
             string param = string.Empty;
             param = (this.format.Equals("json")) ? "?format=json" : string.Empty;
             param += (!string.IsNullOrEmpty(param) && !string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            if (!string.IsNullOrEmpty(param))
+                param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
+            else
+                param += (!string.IsNullOrEmpty(this.sourceId)) ? "?sourceId=" + this.sourceId : string.Empty;
+            
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.topProducts, this.applicationId, this.countryCode, param);
-
+                        
             return GetContent(url);
         }
 
@@ -244,9 +262,11 @@ namespace Apiki_Buscape_API
                 this.ShowErrors(string.Format("ID do produto requerido na função <b>{0}</b>.", Services.viewProductDetails));
 
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewProductDetails, this.applicationId, this.countryCode, param);
 
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewProductDetails, this.applicationId, this.countryCode, param);
+                        
             return GetContent(url);
         }
 
@@ -270,7 +290,9 @@ namespace Apiki_Buscape_API
                 this.ShowErrors(string.Format("ID da loja/empresa requerido na função <b>{0}</b>.", Services.viewSellerDetails));
 
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
+
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewSellerDetails, this.applicationId, this.countryCode, param);
 
             return GetContent(url);
@@ -296,9 +318,11 @@ namespace Apiki_Buscape_API
                 this.ShowErrors(string.Format("ID do produto requerido na função <b>{0}</b>.", Services.viewUserRatings));
 
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewUserRatings, this.applicationId, this.countryCode, param);
 
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewUserRatings, this.applicationId, this.countryCode, param);
+                        
             return GetContent(url);
         }
 
