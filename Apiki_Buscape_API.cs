@@ -40,7 +40,7 @@ namespace Apiki_Buscape_API
         private string isJson;
         
         /// <summary>
-        /// Ambiente servidor ( sandbox | wbs )
+        /// Ambiente servidor ( sandbox | bws )
         /// </summary>
         private string server = "sandbox";
 
@@ -157,7 +157,28 @@ namespace Apiki_Buscape_API
         /// <returns>Retorna uma string com os dados das ofertas</returns>
         public string FindOfferList(int categoryId, string keyword, int productId, string barcode, string callback)
         {
+            return this.FindOfferList(categoryId, keyword, productId, barcode, callback, false);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de ofertas.
+        /// </summary>
+        /// <remarks>
+        /// Pelo menos um dos parametros de pesquisa devem ser informados para o 
+        /// retorno da função. Os parâmetros categoryId e keyword podem ser usados em conjunto.
+        /// Quando um parâmetro for usado, os outros devem ser setados como string.empty.
+        /// </remarks>
+        /// <param name="categoryId">Código da categoria</param>
+        /// <param name="keyword">Palavra chave para busca entre as categorias</param>
+        /// <param name="productId">Código do produto</param>
+        /// <param name="barcode">Código de barras do produto</param>
+        /// <param name="callback">Função de retorno a ser executada caso esteja usando json</param>
+        /// <param name="isLomadee">Indica se será uma requisição ao serviço da lomadee</param>
+        /// <returns>Retorna uma string com os dados das ofertas</returns>
+        public string FindOfferList(int categoryId, string keyword, int productId, string barcode, string callback, bool isLomadee)
+        {
             string param = string.Empty;
+            string paramLomadee = string.Empty;
 
             if (categoryId != 0)
                 param = "?categoryId=" + categoryId.ToString();
@@ -177,8 +198,9 @@ namespace Apiki_Buscape_API
                 this.ShowErrors("Pelo menos um parâmetro de pesquisa é requerido na função " + Services.findOfferList);
 
             param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
+            paramLomadee = (isLomadee) ? "/lomadee" : string.Empty;
 
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param);
+            string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param, paramLomadee);
                         
             return GetContent(url);
         }
@@ -196,7 +218,21 @@ namespace Apiki_Buscape_API
         /// <returns>Retorna uma string com os dados dos produtos</returns>
         public string FindProductList(int categoryId, string keyword, string callback)
         {
+            return this.FindProductList(categoryId, keyword, callback, false);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de produtos únicos
+        /// </summary>
+        /// <param name="categoryId">ID da Categoria</param>
+        /// <param name="keyword">Palavra chave para busca entre as categorias</param>
+        /// <param name="callback">Função de retorno a ser executada caso esteja usando json</param>
+        /// <param name="isLomadee">Indica se será uma requisição ao serviço da lomadee</param>
+        /// <returns>Retorna uma string com os dados dos produtos</returns>
+        public string FindProductList(int categoryId, string keyword, string callback, bool isLomadee)
+        {
             string param = string.Empty;
+            string paramLomadee = string.Empty;
 
             if (categoryId != 0)
                 param = "?categoryId=" + categoryId.ToString();
@@ -212,8 +248,9 @@ namespace Apiki_Buscape_API
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
             param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
+            paramLomadee = (isLomadee) ? "/lomadee" : string.Empty;
 
-            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param);
+            string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param, paramLomadee);
                         
             return GetContent(url);
         }
