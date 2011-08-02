@@ -54,6 +54,7 @@ namespace Apiki_Buscape_API
         /// </summary>
         private enum Services
         {
+            findAdvertiserList,
             findCategoryList,
             findProductList,
             findOfferList,
@@ -94,6 +95,30 @@ namespace Apiki_Buscape_API
 
             if (!(new string[] { "xml", "json" }.Contains(this.format)))
                 this.ShowErrors(string.Format("O formato de retorno <b>{0}</b> não existe.", this.format));            
+        }
+
+        #endregion
+
+        #region FindAdvertiserList
+
+        public string FindAdvertiserList(string siteId, string publisherId, string token, string callback)
+        {
+            string param = string.Empty;
+
+            if (siteId == string.Empty)
+                this.ShowErrors(string.Format("O id do site é requerido na função <b>{0}</b>.", Services.findAdvertiserList));
+            if (publisherId == string.Empty)
+                this.ShowErrors(string.Format("O id do publisher é requerido na função <b>{0}</b>.", Services.findAdvertiserList));
+            if (token == string.Empty)
+                this.ShowErrors(string.Format("O token é requerido na função <b>{0}</b>.", Services.findAdvertiserList));
+
+            param = "?siteId=" + siteId + "&publisherId=" + publisherId + "&token=" + token;
+            if (callback != string.Empty && this.format == "json")
+                param += "&callback=" + callback;
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.findAdvertiserList, this.applicationId, this.countryCode, param);
+
+            return this.GetContent(url);
         }
 
         #endregion
