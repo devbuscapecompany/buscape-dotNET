@@ -101,6 +101,14 @@ namespace Apiki_Buscape_API
 
         #region FindAdvertiserList
 
+        /// <summary>
+        /// Recupera dados dos anunciantes.
+        /// </summary>
+        /// <param name="siteId">Código do site na Lomadee.</param>
+        /// <param name="publisherId">Código do publisher na Lomadee.</param>
+        /// <param name="token">Token para validação do publisher.</param>
+        /// <param name="callback">Função de retorno para o json.</param>
+        /// <returns>Retorna uma string com os dados dos anunciantes.</returns>
         public string FindAdvertiserList(string siteId, string publisherId, string token, string callback)
         {
             string param = string.Empty;
@@ -227,6 +235,27 @@ namespace Apiki_Buscape_API
 
             string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param, paramLomadee);
                         
+            return GetContent(url);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de ofertas.
+        /// </summary>
+        /// <param name="filtros">Objeto do tipo FiltrosFindOfferList que contém todos as opções de filtragem desejadas.</param>
+        /// <returns>Retorna uma string com os dados das ofertas</returns>
+        public string FindOfferList(FiltrosFindOfferList filtros)
+        {
+            string param = filtros.MakeUrlParameters();
+            string paramLomadee = string.Empty;
+
+            if (string.IsNullOrEmpty(param))
+                this.ShowErrors("Pelo menos um parâmetro de pesquisa é requerido na função " + Services.findOfferList);
+
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
+            paramLomadee = (filtros.IsLomadee) ? "/lomadee" : string.Empty;
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param, paramLomadee);
+            
             return GetContent(url);
         }
 

@@ -7,3 +7,5 @@
 06/06/2011 - Métodos FindOfferList e FindProductList para o serviço da Lomadee.
 
 02/08/2011 - Método FindAdvertiserList para o serviço da Lomadee.
+
+23/08/2011 - Nova sobrecarga do método FindOfferList para utilização dos filtros

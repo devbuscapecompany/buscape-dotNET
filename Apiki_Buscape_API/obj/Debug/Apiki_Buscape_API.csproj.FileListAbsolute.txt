@@ -1,0 +1,5 @@
+C:\Documents and Settings\Administrador\Meus documentos\Visual Studio 2008\Projects\Apiki_Buscape_API\Apiki_Buscape_API\bin\Debug\Apiki_Buscape_API.dll
+C:\Documents and Settings\Administrador\Meus documentos\Visual Studio 2008\Projects\Apiki_Buscape_API\Apiki_Buscape_API\bin\Debug\Apiki_Buscape_API.pdb
+C:\Documents and Settings\Administrador\Meus documentos\Visual Studio 2008\Projects\Apiki_Buscape_API\Apiki_Buscape_API\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Administrador\Meus documentos\Visual Studio 2008\Projects\Apiki_Buscape_API\Apiki_Buscape_API\obj\Debug\Apiki_Buscape_API.dll
+C:\Documents and Settings\Administrador\Meus documentos\Visual Studio 2008\Projects\Apiki_Buscape_API\Apiki_Buscape_API\obj\Debug\Apiki_Buscape_API.pdb
