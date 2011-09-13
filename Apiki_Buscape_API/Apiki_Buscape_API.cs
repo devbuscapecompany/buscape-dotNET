@@ -61,7 +61,10 @@ namespace Apiki_Buscape_API
             topProducts,
             viewUserRatings,
             viewProductDetails,
-            viewSellerDetails
+            viewSellerDetails,
+            createSource,
+            saveCode,
+            getCode
         }
         
         #endregion
@@ -419,6 +422,84 @@ namespace Apiki_Buscape_API
 
         #endregion
 
+        #region CreateSource
+                
+        /// <summary>
+        /// Função utilizada para criar um Source ID para o publisher que desejar integrar o seu aplicativo.
+        /// </summary>
+        /// <param name="siteId">o id do site do publisher</param>
+        /// <param name="publisherId">o id do publisher</param>
+        /// <param name="token">token de segurança</param>
+        /// <param name="sourceName">o nome do source escolhido pelo publisher</param>
+        /// <returns>Retorna uma string com o XML que contém o Source ID.</returns>
+        public string CreateSource(string siteId, string publisherId, string token, string sourceName)
+        {
+            string param = string.Empty;
+
+            if (siteId.Equals(string.Empty) || publisherId.Equals(string.Empty) || token.Equals(string.Empty) || sourceName.Equals(string.Empty))                
+                this.ShowErrors(string.Format("Todos os parâmetros são requeridos na função <b>{0}</b>.", Services.createSource));
+
+            string[] arr_param = new string[] { "siteId=" + siteId, "publisherId=" + publisherId, "token=" + token, "sourceName=" + sourceName };
+            param = "?" + string.Join("&", arr_param);
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.createSource, this.applicationId, this.countryCode, param);
+
+            return GetContent(url);
+        }
+
+        #endregion
+
+        #region GetCode
+                
+        /// <summary>
+        /// Recupera o código que deverá ser utilizado pelo publisher em seu site.
+        /// </summary>
+        /// <param name="sourceId">O Source Id gerado com a função CreateSource.</param>
+        /// <returns>Retorna uma string com o código a ser implementado no site.</returns>
+        public string GetCode(string sourceId)
+        {
+            string param = string.Empty;
+
+            if (sourceId.Equals(string.Empty))
+                this.ShowErrors(string.Format("O parâmetro sourceId é requerido na função <b>{0}</b>.", Services.getCode));
+
+            param = "?sourceId=" + sourceId;
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.getCode, this.applicationId, this.countryCode, param);
+
+            return GetContent(url);
+        }
+
+        #endregion
+
+        #region SaveCode
+
+        /// <summary>
+        /// Salva na base da Lomadee o código JS/HTML que deverá ser utilizado pelo publisher.
+        /// </summary>
+        /// <param name="siteId">o id do site do publisher</param>
+        /// <param name="publisherId">o id do publisher</param>
+        /// <param name="token">token de segurança</param>
+        /// <param name="sourceId">o SourceId gerado para o publisher</param>
+        /// <param name="code">O código que será salvo para o publisher</param>
+        /// <returns></returns>
+        public void SaveCode(string siteId, string publisherId, string token, string sourceId, string code)
+        {
+            string param = string.Empty;
+
+            if (siteId.Equals(string.Empty) || publisherId.Equals(string.Empty) || token.Equals(string.Empty) || sourceId.Equals(string.Empty) || code.Equals(string.Empty))
+                this.ShowErrors(string.Format("Todos os parâmetros são requeridos na função <b>{0}</b>.", Services.saveCode));
+
+            string[] arr_param = new string[] { "siteId=" + siteId, "publisherId=" + publisherId, "token=" + token, "sourceId=" + sourceId, "code="+code };
+            param = "?" + string.Join("&", arr_param);
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.saveCode, this.applicationId, this.countryCode, param);
+
+            this.PostContent(url);
+        }
+
+        #endregion
+
         #region ShowErrors
         /// <summary>
         /// Dispara uma WebException.
@@ -436,7 +517,7 @@ namespace Apiki_Buscape_API
 
         #region GetContent
         /// <summary>
-        /// Recupera os dados do serviço BuscaPé
+        /// Recupera os dados do serviço BuscaPé.
         /// </summary>
         /// <param name="url">URL para acesso ao serviço</param>
         /// <returns>Uma string com os dados de retorno da URL requisitada</returns>
@@ -452,6 +533,30 @@ namespace Apiki_Buscape_API
                 }
             }           
         }
+        #endregion
+
+        #region PostContent
+
+        /// <summary>
+        /// Realiza um HTTP POST nos serviços da Lomadee.
+        /// </summary>
+        /// <param name="url">URL para acesso ao serviço.</param>
+        /// <returns>Uma string com os dados de retorno da URL requisitada.</returns>
+        private string PostContent(string url)
+        {            
+            try {
+                WebRequest request = WebRequest.Create(url);
+                request.Method = WebRequestMethods.Http.Post;                
+                WebResponse response = request.GetResponse();
+                
+                using (StreamReader reader = new StreamReader(response.GetResponseStream())) {
+                    return reader.ReadToEnd();
+                }
+            } catch (WebException ex) {
+                throw ex;
+            }            
+        }
+
         #endregion
 
     }

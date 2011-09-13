@@ -8,4 +8,6 @@
 
 02/08/2011 - Método FindAdvertiserList para o serviço da Lomadee.
 
-23/08/2011 - Nova sobrecarga do método FindOfferList para utilização dos filtros
+23/08/2011 - Nova sobrecarga do método FindOfferList para utilização dos filtros.
+
+13/09/2011 - Métodos para a integração do aplicativo com a Lomadee.
