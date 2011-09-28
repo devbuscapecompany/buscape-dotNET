@@ -11,3 +11,5 @@
 23/08/2011 - Nova sobrecarga do método FindOfferList para utilização dos filtros.
 
 13/09/2011 - Métodos para a integração do aplicativo com a Lomadee.
+
+27/09/2011 - Implementação de filtros por coordenadas geográficas no método FindOfferList

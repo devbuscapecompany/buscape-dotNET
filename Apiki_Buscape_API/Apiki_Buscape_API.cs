@@ -23,22 +23,22 @@ namespace Apiki_Buscape_API
         /// ID da aplicação
         /// </summary>
         private string applicationId;
-        
+
         /// <summary>
         /// Código do país
         /// </summary>
         private string countryCode;
-        
+
         /// <summary>
         /// Formato de retorno
         /// </summary>
         private string format;
-       
+
         /// <summary>
         /// Usando JSON
         /// </summary>
         private string isJson;
-        
+
         /// <summary>
         /// Ambiente servidor ( sandbox | bws )
         /// </summary>
@@ -48,7 +48,7 @@ namespace Apiki_Buscape_API
         /// Source ID do lomadee, com o qual a API do BuscaPé irá vincular com o perfil Lomadee.
         /// </summary>
         private string sourceId;
-        
+
         /// <summary>
         /// Identificação dos serviços executados pela classe
         /// </summary>
@@ -66,11 +66,11 @@ namespace Apiki_Buscape_API
             saveCode,
             getCode
         }
-        
+
         #endregion
 
         #region Construtor
-               
+
         public Apiki_Buscape_API(string applicationId) : this(applicationId, string.Empty) { }
 
         public Apiki_Buscape_API(string applicationId, string sourceId) : this(applicationId, sourceId, "BR") { }
@@ -81,11 +81,11 @@ namespace Apiki_Buscape_API
 
         public Apiki_Buscape_API(string applicationId, string sourceId, string countryCode, string format, bool sandbox)
         {
-            this.applicationId  = applicationId;
-            this.countryCode    = countryCode;
-            this.format         = format;
-            this.isJson         = ( this.format.Equals("json") ) ? "&format=json" : string.Empty ;
-            this.sourceId       = sourceId;
+            this.applicationId = applicationId;
+            this.countryCode = countryCode;
+            this.format = format;
+            this.isJson = (this.format.Equals("json")) ? "&format=json" : string.Empty;
+            this.sourceId = sourceId;
 
             if (!sandbox)
                 this.server = "bws";
@@ -97,7 +97,7 @@ namespace Apiki_Buscape_API
                 this.ShowErrors(string.Format("O código do país <b>{0}</b> não existe.", this.countryCode));
 
             if (!(new string[] { "xml", "json" }.Contains(this.format)))
-                this.ShowErrors(string.Format("O formato de retorno <b>{0}</b> não existe.", this.format));            
+                this.ShowErrors(string.Format("O formato de retorno <b>{0}</b> não existe.", this.format));
         }
 
         #endregion
@@ -149,13 +149,13 @@ namespace Apiki_Buscape_API
         public string FindCategoryList(int? categoryId, string keyword, string callback)
         {
             string param = string.Empty;
-            
+
             if (categoryId == null && keyword == string.Empty)
                 categoryId = 0;
-            
+
             if (categoryId != null)
                 param = "?categoryId=" + categoryId.ToString();
-            
+
             if (!string.IsNullOrEmpty(keyword))
             {
                 if (param != string.Empty)
@@ -163,13 +163,13 @@ namespace Apiki_Buscape_API
                 else
                     param = "?keyword=" + keyword;
             }
-            
+
             param += (!string.IsNullOrEmpty(callback)) ? "&callback=" + callback : string.Empty;
             param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             param += this.isJson;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findCategoryList, this.applicationId, this.countryCode, param);
-            
+
             return this.GetContent(url);
         }
 
@@ -237,7 +237,7 @@ namespace Apiki_Buscape_API
             paramLomadee = (isLomadee) ? "/lomadee" : string.Empty;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param, paramLomadee);
-                        
+
             return GetContent(url);
         }
 
@@ -258,14 +258,14 @@ namespace Apiki_Buscape_API
             paramLomadee = (filtros.IsLomadee) ? "/lomadee" : string.Empty;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findOfferList, this.applicationId, this.countryCode, param, paramLomadee);
-            
+
             return GetContent(url);
         }
 
         #endregion
 
         #region FindProductList
-        
+
         /// <summary>
         /// Recupera uma lista de produtos únicos
         /// </summary>
@@ -293,7 +293,8 @@ namespace Apiki_Buscape_API
 
             if (categoryId != 0)
                 param = "?categoryId=" + categoryId.ToString();
-            if (!string.IsNullOrEmpty(keyword)) {
+            if (!string.IsNullOrEmpty(keyword))
+            {
                 if (!string.IsNullOrEmpty(param))
                     param += "&keyword=" + keyword;
                 else
@@ -308,14 +309,14 @@ namespace Apiki_Buscape_API
             paramLomadee = (isLomadee) ? "/lomadee" : string.Empty;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param, paramLomadee);
-                        
+
             return GetContent(url);
         }
 
-        #endregion        
+        #endregion
 
         #region TopProducts
-        
+
         /// <summary>
         /// Recupera os produtos mais populares no BúscaPé
         /// </summary>
@@ -330,16 +331,16 @@ namespace Apiki_Buscape_API
                 param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
             else
                 param += (!string.IsNullOrEmpty(this.sourceId)) ? "?sourceId=" + this.sourceId : string.Empty;
-            
+
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.topProducts, this.applicationId, this.countryCode, param);
-                        
+
             return GetContent(url);
         }
 
         #endregion
 
         #region ViewProductDetails
-        
+
         /// <summary>
         /// Recupera detalhes técnicos de um determinado produto
         /// </summary>
@@ -360,14 +361,14 @@ namespace Apiki_Buscape_API
             param += this.isJson;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewProductDetails, this.applicationId, this.countryCode, param);
-                        
+
             return GetContent(url);
         }
 
         #endregion
 
         #region ViewSellerDetails
-                
+
         /// <summary>
         /// Recupera detalhes da loja/empresa
         /// </summary>
@@ -393,9 +394,9 @@ namespace Apiki_Buscape_API
         }
 
         #endregion
-        
+
         #region ViewUserRatings
-        
+
         /// <summary>
         /// Recupera as avaliações dos usuários sobre um determinado produto
         /// </summary>
@@ -416,14 +417,14 @@ namespace Apiki_Buscape_API
             param += this.isJson;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.viewUserRatings, this.applicationId, this.countryCode, param);
-                        
+
             return GetContent(url);
         }
 
         #endregion
 
         #region CreateSource
-                
+
         /// <summary>
         /// Função utilizada para criar um Source ID para o publisher que desejar integrar o seu aplicativo.
         /// </summary>
@@ -436,7 +437,7 @@ namespace Apiki_Buscape_API
         {
             string param = string.Empty;
 
-            if (siteId.Equals(string.Empty) || publisherId.Equals(string.Empty) || token.Equals(string.Empty) || sourceName.Equals(string.Empty))                
+            if (siteId.Equals(string.Empty) || publisherId.Equals(string.Empty) || token.Equals(string.Empty) || sourceName.Equals(string.Empty))
                 this.ShowErrors(string.Format("Todos os parâmetros são requeridos na função <b>{0}</b>.", Services.createSource));
 
             string[] arr_param = new string[] { "siteId=" + siteId, "publisherId=" + publisherId, "token=" + token, "sourceName=" + sourceName };
@@ -450,7 +451,7 @@ namespace Apiki_Buscape_API
         #endregion
 
         #region GetCode
-                
+
         /// <summary>
         /// Recupera o código que deverá ser utilizado pelo publisher em seu site.
         /// </summary>
@@ -490,7 +491,7 @@ namespace Apiki_Buscape_API
             if (siteId.Equals(string.Empty) || publisherId.Equals(string.Empty) || token.Equals(string.Empty) || sourceId.Equals(string.Empty) || code.Equals(string.Empty))
                 this.ShowErrors(string.Format("Todos os parâmetros são requeridos na função <b>{0}</b>.", Services.saveCode));
 
-            string[] arr_param = new string[] { "siteId=" + siteId, "publisherId=" + publisherId, "token=" + token, "sourceId=" + sourceId, "code="+code };
+            string[] arr_param = new string[] { "siteId=" + siteId, "publisherId=" + publisherId, "token=" + token, "sourceId=" + sourceId, "code=" + code };
             param = "?" + string.Join("&", arr_param);
 
             string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.saveCode, this.applicationId, this.countryCode, param);
@@ -523,15 +524,20 @@ namespace Apiki_Buscape_API
         /// <returns>Uma string com os dados de retorno da URL requisitada</returns>
         private string GetContent(string url)
         {
-            using (WebClient client = new WebClient()) {
-                try {
-                    using (StreamReader reader = new StreamReader(client.OpenRead(url))) {
+            using (WebClient client = new WebClient())
+            {
+                try
+                {
+                    using (StreamReader reader = new StreamReader(client.OpenRead(url)))
+                    {
                         return reader.ReadToEnd();
                     }
-                } catch (WebException ex) {
+                }
+                catch (WebException ex)
+                {
                     throw ex;
                 }
-            }           
+            }
         }
         #endregion
 
@@ -543,18 +549,22 @@ namespace Apiki_Buscape_API
         /// <param name="url">URL para acesso ao serviço.</param>
         /// <returns>Uma string com os dados de retorno da URL requisitada.</returns>
         private string PostContent(string url)
-        {            
-            try {
+        {
+            try
+            {
                 WebRequest request = WebRequest.Create(url);
-                request.Method = WebRequestMethods.Http.Post;                
+                request.Method = WebRequestMethods.Http.Post;
                 WebResponse response = request.GetResponse();
-                
-                using (StreamReader reader = new StreamReader(response.GetResponseStream())) {
+
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
                     return reader.ReadToEnd();
                 }
-            } catch (WebException ex) {
+            }
+            catch (WebException ex)
+            {
                 throw ex;
-            }            
+            }
         }
 
         #endregion

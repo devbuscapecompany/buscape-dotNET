@@ -6,21 +6,38 @@ using System.Collections;
 
 namespace Apiki_Buscape_API
 {
+    public class CoordenadasSimples
+    {
+        public double latitude;
+        public double longitude;
+        public int radius;
+    }
+
+    public class CoordenadasComplexas
+    {
+        public double north;
+        public double south;
+        public double east;
+        public double west;
+    }
+
     public class FiltrosFindOfferList
     {
         private int categoryId;
         private int productId;
         private int results;
         private int page;
-        private float priceMin;
-        private float priceMax;
+        private double priceMin;
+        private double priceMax;
         private bool isLomadee;
         private string keyword;
         private string barcode;
         private string callback;
         private string sort;
         private string medal;
-        
+        private CoordenadasSimples coordenadasSimples = new CoordenadasSimples();
+        private CoordenadasComplexas coordenadasComplexas = new CoordenadasComplexas();
+
         /// <summary>
         /// Filtra ofertas e produtos a partir de uma determinada medalha do eBit:
         ///    * all
@@ -53,7 +70,7 @@ namespace Apiki_Buscape_API
         /// <summary>
         /// Preço Máximo de pesquisa.
         /// </summary>
-        public float PriceMax
+        public double PriceMax
         {
             get { return priceMax; }
             set { priceMax = value; }
@@ -62,7 +79,7 @@ namespace Apiki_Buscape_API
         /// <summary>
         /// Preço Mínimo de pesquisa.
         /// </summary>
-        public float PriceMin
+        public double PriceMin
         {
             get { return priceMin; }
             set { priceMin = value; }
@@ -141,6 +158,24 @@ namespace Apiki_Buscape_API
         }
 
         /// <summary>
+        /// Utilize os parâmetros complexos para obter uma oferta pela sua localização.
+        /// </summary>
+        public CoordenadasComplexas CoordenadasComplexas
+        {
+            get { return coordenadasComplexas; }
+            set { coordenadasComplexas = value; }
+        }
+
+        /// <summary>
+        /// Utilize os parâmetros simples para obter uma oferta pela sua localização.
+        /// </summary>
+        public CoordenadasSimples CoordenadasSimples
+        {
+            get { return coordenadasSimples; }
+            set { coordenadasSimples = value; }
+        }
+
+        /// <summary>
         /// Usa as propriedades do objeto que foram setadas com algum valor para montar os parâmetros
         /// da URL de requisição à API do BuscaPé.
         /// </summary>
@@ -197,9 +232,28 @@ namespace Apiki_Buscape_API
             string[] validMedal = new string[] { "all", "diamond", "gold", "silver", "bronze" };
             if (validMedal.Contains(this.medal))
                 param += "&medal=" + this.medal;
-            
+
+            /* Validamos agora os filtros por localização */
+            if (this.coordenadasSimples.latitude != 0.00 && this.coordenadasSimples.longitude != 0.00 && this.coordenadasSimples.radius != 0.00)
+            {
+                param += "&latitude=" + this.coordenadasSimples.latitude.ToString();
+                param += "&longitude=" + this.coordenadasSimples.longitude.ToString();
+                param += "&radius=" + this.coordenadasSimples.radius.ToString();
+            }
+            else if (this.coordenadasComplexas.north != 0.00 && this.coordenadasComplexas.south != 0.00 && this.coordenadasComplexas.east != 0.00 && this.coordenadasComplexas.west != 0.00)
+            {
+                param += "&north=" + this.coordenadasComplexas.north.ToString();
+                param += "&south=" + this.coordenadasComplexas.south.ToString();
+                param += "&east=" + this.coordenadasComplexas.east.ToString();
+                param += "&west=" + this.coordenadasComplexas.west.ToString();
+            }
+
+            // Troca as vírgulas dos números decimais por pontos, que é o esperado pela API
+            param = param.Replace(',', '.');
+
             return param;
 
         }
+
     }
 }
