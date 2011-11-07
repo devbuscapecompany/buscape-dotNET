@@ -58,6 +58,7 @@ namespace Apiki_Buscape_API
             findCategoryList,
             findProductList,
             findOfferList,
+            findSellers,
             topProducts,
             viewUserRatings,
             viewProductDetails,
@@ -309,6 +310,88 @@ namespace Apiki_Buscape_API
             paramLomadee = (isLomadee) ? "/lomadee" : string.Empty;
 
             string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param, paramLomadee);
+
+            return GetContent(url);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de produtos únicos
+        /// </summary>
+        /// <param name="filtros">Objeto do tipo FiltrosFindProducts que contém todas as opções de filtragem.</param>
+        /// <returns>Retorna uma string com os dados das ofertas.</returns>
+        public string FindProductList(FiltrosFindProducts filtros)
+        {
+            string param = filtros.MakeUrlParameters();
+            string paramLomadee = string.Empty;
+
+            if (string.IsNullOrEmpty(param))
+                this.ShowErrors("Pelo menos um parâmetro de pesquisa é requerido na função " + Services.findProductList);
+
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
+            paramLomadee = (filtros.IsLomadee) ? "/lomadee" : string.Empty;
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}{5}/{2}/{3}/{4}", this.server, Services.findProductList, this.applicationId, this.countryCode, param, paramLomadee);
+
+            return GetContent(url);
+        }
+
+        #endregion
+
+        #region FindSellers
+
+        /// <summary>
+        /// Recupera uma lista de lojas cadastradas no BuscaPé, filtrando pelo nome ou pela localização.
+        /// </summary>
+        /// <param name="sellerName">Nome da loja, ou parte do nome.</param>
+        /// <returns>Retorna uma string com os dados das lojas</returns>
+        public string FindSellers(string sellerName)
+        {
+            return this.FindSellers(sellerName, 0.00, 0.00, 0.00);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de lojas cadastradas no BuscaPé, filtrando pelo nome ou pela localização.
+        /// </summary>
+        /// <param name="latitude">Latitude da localização da loja</param>
+        /// <param name="longitude">Longitude da localização da loja</param>
+        /// <param name="radius">Raio de alcance da pesquisa por localização.</param>
+        /// <returns>Retorna uma string com os dados das lojas</returns>
+        public string FindSellers(double latitude, double longitude, double radius)
+        {
+            return this.FindSellers(string.Empty, latitude, longitude, radius);
+        }
+
+        /// <summary>
+        /// Recupera uma lista de lojas cadastradas no BuscaPé, filtrando pelo nome ou pela localização.
+        /// </summary>
+        /// <param name="sellerName">Nome da loja, ou parte do nome.</param>
+        /// <param name="latitude">Latitude da localização da loja</param>
+        /// <param name="longitude">Longitude da localização da loja</param>
+        /// <param name="radius">Raio de alcance da pesquisa por localização.</param>
+        /// <returns>Retorna uma string com os dados das lojas</returns>
+        public string FindSellers(string sellerName, double latitude, double longitude, double radius)
+        {
+            string param = string.Empty;
+
+            if (!string.IsNullOrEmpty(sellerName))
+                param = "?sellerName=" + sellerName;
+
+            if (latitude != 0.00 && longitude != 0.00 && radius != 0.00)
+            {
+                param += (!string.IsNullOrEmpty(param)) ? "&latitude="+latitude : "?latitude="+latitude;
+                param += "&longitude=" + longitude;
+                param += "&radius=" + radius;
+            }
+
+            if (string.IsNullOrEmpty(param))
+                this.ShowErrors("Você deve informar o nome da loja ou as coordenadas geográficas para realizar a busca");
+
+            param += (!string.IsNullOrEmpty(this.sourceId)) ? "&sourceId=" + this.sourceId : string.Empty;
+
+            // Troca as vírgulas dos números decimais por pontos, que é o esperado pela API
+            param = param.Replace(',', '.');
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/{2}/{3}/{4}", this.server, Services.findSellers, this.applicationId, this.countryCode, param);
 
             return GetContent(url);
         }

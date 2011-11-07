@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Apiki_Buscape_API.cs" />
     <Compile Include="FiltrosFindOfferList.cs" />
+    <Compile Include="FiltrosFindProducts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
