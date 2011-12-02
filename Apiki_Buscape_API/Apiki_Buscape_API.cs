@@ -65,7 +65,8 @@ namespace Apiki_Buscape_API
             viewSellerDetails,
             createSource,
             saveCode,
-            getCode
+            getCode,
+            createLinks
         }
 
         #endregion
@@ -580,6 +581,43 @@ namespace Apiki_Buscape_API
             string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.saveCode, this.applicationId, this.countryCode, param);
 
             this.PostContent(url);
+        }
+
+        #endregion
+
+        #region CreateLinks
+
+        /// <summary>
+        /// Retorna o link lomadeezado. O link deve estar relacionado com o sourceId informado
+        /// senão será retornado link inválido.
+        /// </summary>
+        /// <param name="link">Url para lomadeezar.</param>
+        /// <returns>XML de retorno.</returns>
+        public string CreateLinks(string link)
+        {
+            return this.CreateLinks(new string[] { link });
+        }
+
+        /// <summary>
+        /// Retorna os links informados lomadeezados. Os links devem estar relacionados 
+        /// com o sourceId informado senão será retornado link inválido.
+        /// </summary>
+        /// <param name="links">Várias urls podem ser informadas.</param>
+        /// <returns>XML de retorno.</returns>
+        public string CreateLinks( string[] links )
+        {
+            string param = string.Empty;
+
+            int i = 1;
+            foreach (string link in links)
+            {
+                param += string.Format("&link{0}={1}", i, link);
+                i++;
+            }
+
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/?sourceId={4}{5}", this.server, Services.createLinks, this.applicationId, this.countryCode, this.sourceId, param);
+
+            return GetContent(url);
         }
 
         #endregion
