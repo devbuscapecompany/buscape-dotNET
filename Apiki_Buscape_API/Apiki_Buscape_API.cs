@@ -63,6 +63,7 @@ namespace Apiki_Buscape_API
             viewUserRatings,
             viewProductDetails,
             viewSellerDetails,
+            offers,
             createSource,
             saveCode,
             getCode,
@@ -506,6 +507,29 @@ namespace Apiki_Buscape_API
         }
 
         #endregion
+
+        public string OffersLomadee(string keyword, string advertiserId, int results)
+        {
+            string param = string.Empty;
+
+            if (string.IsNullOrEmpty(this.sourceId))
+                this.ShowErrors("O parâmetro sourceId é requerido na função " + Services.offers + ". Informe um ao instanciar a classe.");
+
+            param = "?sourceId=" + this.sourceId;
+
+            if (!string.IsNullOrEmpty(keyword))
+                param += "&keyword=" + keyword;
+
+            if (!string.IsNullOrEmpty(advertiserId))
+                param += "&advertiserId=" + advertiserId;
+
+            if (results > 0 && results <= 30)
+                param += "&results=" + results;
+            
+            string url = string.Format("http://{0}.buscape.com/service/{1}/lomadee/{2}/{3}/{4}", this.server, Services.offers, this.applicationId, this.countryCode, param);
+
+            return GetContent(url);
+        }
 
         #region CreateSource
 

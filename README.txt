@@ -17,3 +17,5 @@
 07/11/2011 - Implementação dos filtros adicionais do método FindProductList
 
 30/11/2011 - Implementação do método CreateLinks para lomadeezar links.
+
+12/12/2011 - IMplementação do método OffersLomadee.
