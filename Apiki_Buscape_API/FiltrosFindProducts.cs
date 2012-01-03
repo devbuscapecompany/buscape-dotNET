@@ -2,9 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace Apiki_Buscape_API
 {
+    public class SpecIds
+    {
+        private int nameId;
+        private int valueId;
+
+        public int NameId
+        {
+            get { return nameId; }
+            set { nameId = value; }
+        }
+
+        public int ValueId
+        {
+            get { return valueId; }
+            set { valueId = value; }
+        }
+
+        public SpecIds(int nameId, int valueId)
+        {
+            this.nameId = nameId;
+            this.valueId = valueId;
+        }
+    }
+
     public class FiltrosFindProducts
     {
         private int categoryId;
@@ -19,6 +44,7 @@ namespace Apiki_Buscape_API
         private string medal;
         private CoordenadasSimples coordenadasSimples = new CoordenadasSimples();
         private CoordenadasComplexas coordenadasComplexas = new CoordenadasComplexas();
+        private ArrayList specFilters = new ArrayList();
 
         /// <summary>
         /// Filtra ofertas e produtos a partir de uma determinada medalha do eBit:
@@ -198,6 +224,14 @@ namespace Apiki_Buscape_API
                 param += "&south=" + this.coordenadasComplexas.south.ToString();
                 param += "&east=" + this.coordenadasComplexas.east.ToString();
                 param += "&west=" + this.coordenadasComplexas.west.ToString();
+            }
+
+            /* Agora montamos a query com os filtros spec */
+            if (this.specFilters.Count > 0)
+            {
+                foreach (SpecIds spec in this.specFilters)
+                    param += "&specId" + spec.NameId + "=" + spec.ValueId;
+
             }
 
             // Troca as vírgulas dos números decimais por pontos, que é o esperado pela API

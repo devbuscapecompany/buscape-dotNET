@@ -18,4 +18,6 @@
 
 30/11/2011 - Implementação do método CreateLinks para lomadeezar links.
 
-12/12/2011 - IMplementação do método OffersLomadee.
+12/12/2011 - Implementação do método OffersLomadee.
+
+27/12/2011 - Implementação do parâmetro specId no método findProductList
